@@ -26,35 +26,26 @@ jobs:
       - name: Build for ${{ matrix.os }}
         run: |
           if [ ${{ matrix.os }} == 'darwin' ]; then
-            GOOS=${{ matrix.os }} GOARCH=arm64 go build -o bin/golaps-${{ matrix.os }}-arm64 src/*.go
+            GOOS=${{ matrix.os }} GOARCH=arm64 go build -o bin/golaps-${{ github.ref_name }}-${{ matrix.os }}-arm64 src/*.go
           else
-            GOOS=${{ matrix.os }} GOARCH=amd64 go build -o bin/golaps-${{ matrix.os }}-amd64 src/*.go
+            GOOS=${{ matrix.os }} GOARCH=amd64 go build -o bin/golaps-${{ github.ref_name }}-${{ matrix.os }}-amd64 src/*.go
           fi
 
-      - name: Upload windows artifact
+      - name: Upload windows and linux artifact
         uses: actions/upload-artifact@v2
         with:
           name: golaps-windows-amd64
-          path: bin/golaps-windows-amd64
-      
-      - name: Upload linux artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: golaps-linux-amd64
-          path: bin/golaps-linux-amd64
+          path: bin/golaps-${{ github.ref_name }}-${{ matrix.os }}-amd64
 
-      - name: Upload macos artifact
+      - name: Upload Macos artifact
         uses: actions/upload-artifact@v2
         with:
           name: golaps-darwin-arm64
-          path: bin/golaps-darwin-arm64
+          path: bin/golaps-${{ github.ref_name }}-darwin-arm64
 
   publish:
     name: Publish Releases
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        os: [linux, windows, darwin]
 
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
@@ -62,20 +53,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Download artifacts
+      - name: Download artifacts - Windows
         uses: actions/download-artifact@v2
         with:
-          name: golaps-windows-amd64
+          name: golaps-${{ github.ref_name }}-windows-amd64
       
-      - name: Download artifacts
+      - name: Download artifacts - Linux
         uses: actions/download-artifact@v2
         with:
-          name: golaps-linux-amd64
+          name: golaps-${{ github.ref_name }}-linux-amd64
 
-      - name: Download artifacts
+      - name: Download artifacts - MacOS
         uses: actions/download-artifact@v2
         with:
-          name: golaps-darwin-arm64
+          name: golaps-${{ github.ref_name }}-darwin-arm64
 
       - name: Create Release
         id: create_release
@@ -92,7 +83,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./golaps-linux-amd64
-          asset_name: golaps-linux-amd64
+          asset_name: golaps-${{ github.ref_name }}-linux-amd64
           asset_content_type: application/octet-stream
       
       
@@ -102,7 +93,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./golaps-windows-amd64
-          asset_name: golaps-windows-amd64
+          asset_name: golaps-${{ github.ref_name }}-windows-amd64
           asset_content_type: application/octet-stream
 
       
@@ -112,6 +103,6 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./golaps-darwin-arm64
-          asset_name: golaps-darwin-arm64
+          asset_name: golaps-${{ github.ref_name }}-darwin-arm64
           asset_content_type: application/octet-stream
 
