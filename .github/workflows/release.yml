@@ -26,28 +26,28 @@ jobs:
       - name: Build for ${{ matrix.os }}
         run: |
           if [ ${{ matrix.os }} == 'darwin' ]; then
-            GOOS=${{ matrix.os }} GOARCH=arm64 go build -o golaps-${{ matrix.os }}-arm64 .
+            GOOS=${{ matrix.os }} GOARCH=arm64 go build -o bin/golaps-${{ matrix.os }}-arm64 src/*.go
           else
-            GOOS=${{ matrix.os }} GOARCH=amd64 go build -o golaps-${{ matrix.os }}-amd64 .
+            GOOS=${{ matrix.os }} GOARCH=amd64 go build -o bin/golaps-${{ matrix.os }}-amd64 src/*.go
           fi
 
       - name: Upload windows artifact
         uses: actions/upload-artifact@v2
         with:
           name: golaps-windows-amd64
-          path: golaps-windows-amd64
+          path: bin/golaps-windows-amd64
       
       - name: Upload linux artifact
         uses: actions/upload-artifact@v2
         with:
           name: golaps-linux-amd64
-          path: golaps-linux-amd64
+          path: bin/golaps-linux-amd64
 
       - name: Upload macos artifact
         uses: actions/upload-artifact@v2
         with:
           name: golaps-darwin-arm64
-          path: golaps-darwin-arm64
+          path: bin/golaps-darwin-arm64
 
   publish:
     name: Publish Releases
