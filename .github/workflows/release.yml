@@ -1,0 +1,117 @@
+# Release a new golang binary for windows and linux when I push to main
+name: release-when-push-to-main
+run-name: Release when push to main
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
+jobs:
+  build:
+    name: Build for ${{ matrix.os }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [linux, windows, darwin]
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Set up Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.22
+      
+      - name: Build for ${{ matrix.os }}
+        run: |
+          if [ ${{ matrix.os }} == 'darwin' ]; then
+            GOOS=${{ matrix.os }} GOARCH=arm64 go build -o golaps-${{ matrix.os }}-arm64 .
+          else
+            GOOS=${{ matrix.os }} GOARCH=amd64 go build -o golaps-${{ matrix.os }}-amd64 .
+          fi
+
+      - name: Upload windows artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: golaps-windows-amd64
+          path: golaps-windows-amd64
+      
+      - name: Upload linux artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: golaps-linux-amd64
+          path: golaps-linux-amd64
+
+      - name: Upload macos artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: golaps-darwin-arm64
+          path: golaps-darwin-arm64
+
+  publish:
+    name: Publish Releases
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [linux, windows, darwin]
+
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: golaps-windows-amd64
+      
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: golaps-linux-amd64
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: golaps-darwin-arm64
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Asset - Linux
+        id: upload-release-asset-linux
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./golaps-linux-amd64
+          asset_name: golaps-linux-amd64
+          asset_content_type: application/octet-stream
+      
+      
+      - name: Upload Release Asset - Windows
+        id: upload-release-asset-windows
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./golaps-windows-amd64
+          asset_name: golaps-windows-amd64
+          asset_content_type: application/octet-stream
+
+      
+      - name: Upload Release Asset - MacOS
+        id: upload-release-asset-macos
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./golaps-darwin-arm64
+          asset_name: golaps-darwin-arm64
+          asset_content_type: application/octet-stream
+

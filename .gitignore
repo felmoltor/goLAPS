@@ -3,3 +3,5 @@ logs/*
 .vscode
 golaps
 bin/*
+launch.json
+sync.sh
