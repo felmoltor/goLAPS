@@ -5,6 +5,23 @@ import (
 	"log"
 )
 
+func printBanner() {
+	fmt.Print(`
+    ________  ________  ___       ________  ________  ________      
+    |\   ____\|\   __  \|\  \     |\   __  \|\   __  \|\   ____\     
+    \ \  \___|\ \  \|\  \ \  \    \ \  \|\  \ \  \|\  \ \  \___|_    
+     \ \  \  __\ \  \\\  \ \  \    \ \   __  \ \   ____\ \_____  \   
+      \ \  \|\  \ \  \\\  \ \  \____\ \  \ \  \ \  \___|\|____|\  \  
+       \ \_______\ \_______\ \_______\ \__\ \__\ \__\     ____\_\  \ 
+        \|_______|\|_______|\|_______|\|__|\|__|\|__|    |\_________\
+                                                         \|_________|
+    Retrieve LAPS passwords from a domain controler
+    (author: @felmoltor)
+    Inspired by pyLAPS (https://github.com/p0dalirius/pyLAPS)            
+
+`)
+}
+
 func getLapsPassword(args *GetArgs) {
 	gl := GoLaps{
 		Credentials: Credentials{
@@ -68,7 +85,7 @@ func setLapsPassword(args *SetArgs) {
 
 // main
 func main() {
-
+	printBanner()
 	args := parseArgs()
 
 	if args.get != nil {
