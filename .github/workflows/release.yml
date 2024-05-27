@@ -3,8 +3,6 @@ name: release-when-push-to-main
 run-name: Release when push to main
 on:
   push:
-    branches:
-      - main
     tags:
       - v*
 jobs:
@@ -85,6 +83,8 @@ jobs:
           asset_path: ./golaps-linux-amd64
           asset_name: golaps-${{ github.ref_name }}-linux-amd64
           asset_content_type: application/octet-stream
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       
       - name: Upload Release Asset - Windows
