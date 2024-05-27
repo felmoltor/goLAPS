@@ -34,13 +34,13 @@ jobs:
       - name: Upload windows and linux artifact
         uses: actions/upload-artifact@v2
         with:
-          name: golaps-windows-amd64
+          name: golaps-${{ github.ref_name }}-${{ matrix.os }}-amd64
           path: bin/golaps-${{ github.ref_name }}-${{ matrix.os }}-amd64
 
       - name: Upload Macos artifact
         uses: actions/upload-artifact@v2
         with:
-          name: golaps-darwin-arm64
+          name: golaps-${{ github.ref_name }}-darwin-arm64
           path: bin/golaps-${{ github.ref_name }}-darwin-arm64
 
   publish:
