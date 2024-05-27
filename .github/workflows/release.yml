@@ -80,9 +80,10 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./golaps-linux-amd64
+          asset_path: ./golaps-${{ github.ref_name }}-linux-amd64
           asset_name: golaps-${{ github.ref_name }}-linux-amd64
           asset_content_type: application/octet-stream
+          token: ${{ secrets.GITHUB_TOKEN }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
@@ -92,17 +93,22 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./golaps-windows-amd64
+          asset_path: ./golaps-${{ github.ref_name }}-windows-amd64
           asset_name: golaps-${{ github.ref_name }}-windows-amd64
           asset_content_type: application/octet-stream
+          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      
       - name: Upload Release Asset - MacOS
         id: upload-release-asset-macos
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./golaps-darwin-arm64
+          asset_path: ./golaps-${{ github.ref_name }}-darwin-arm64
           asset_name: golaps-${{ github.ref_name }}-darwin-arm64
           asset_content_type: application/octet-stream
+          token: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
