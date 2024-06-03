@@ -45,7 +45,7 @@ func getLapsPassword(args *GetArgs) {
 	if err != nil {
 		log.Fatal("Error getting domain DN" + err.Error())
 	}
-	_, err = gl.SearchComputersWithLaps(l)
+	_, err = gl.SearchComputersWithLaps(l, args.Outfile)
 	if err != nil {
 		log.Fatal("Error searching for computers with LAPS" + err.Error())
 	}

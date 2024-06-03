@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/tls"
+	csv "encoding/csv"
 	"fmt"
 	"io"
 	"log"
@@ -115,7 +116,7 @@ func (gl *GoLaps) GetDomainDN(l *ldap.Conn) (string, error) {
 	return domainDN, err
 }
 
-func (gl GoLaps) SearchComputersWithLaps(l *ldap.Conn) (*ldap.SearchResult, error) {
+func (gl GoLaps) SearchComputersWithLaps(l *ldap.Conn, csvfile string) (*ldap.SearchResult, error) {
 	searchFilter := fmt.Sprintf("(&(objectCategory=computer)(ms-MCS-AdmPwd=*)(sAMAccountName=*%s*))", ldap.EscapeFilter(gl.ComputernameFilter))
 	if gl.ComputernameFilter == "" {
 		searchFilter = "(&(objectCategory=computer)(ms-MCS-AdmPwd=*))"
@@ -133,6 +134,21 @@ func (gl GoLaps) SearchComputersWithLaps(l *ldap.Conn) (*ldap.SearchResult, erro
 		log.Fatal("Error searching for Computers with ms-Mcs-AdmPwd attributes" + err.Error())
 	}
 
+	// Open the CSV file to write the search results
+	var w *csv.Writer
+	if csvfile != "" {
+		// Export to CSV
+		file, err := os.OpenFile(csvfile, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Println("Error opening CSV file" + err.Error())
+		}
+		defer file.Close()
+		w = csv.NewWriter(file)
+		defer w.Flush()
+		row := []string{"sAMAccountNamE", "ms-Mcs-AdmPwd"}
+		w.Write(row)
+	}
+
 	// Print search results
 	log.Println("Search Results:")
 	for _, entry := range sr.Entries {
@@ -140,6 +156,11 @@ func (gl GoLaps) SearchComputersWithLaps(l *ldap.Conn) (*ldap.SearchResult, erro
 		name := entry.GetAttributeValue("sAMAccountName")
 		pass := entry.GetAttributeValue("ms-Mcs-AdmPwd")
 		log.Printf(" %s: %s\n", name, pass)
+		// Write to CSV if the writer is not nil
+		if w != nil {
+			row := []string{name, pass}
+			w.Write(row)
+		}
 	}
 
 	return sr, err

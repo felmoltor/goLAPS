@@ -5,3 +5,4 @@ golaps
 bin/*
 launch.json
 sync.sh
+.DS_Store

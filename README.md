@@ -12,9 +12,25 @@ The tools is inspired in [pyLAPS](https://github.com/p0dalirius/pyLAPS). This pr
 ## Get LAPS passwords
 ```bash
 ./golaps get -h
-usage: golaps get [-h|--help] [-D|--dc "<value>"] [-u|--username "<value>"]
-              [-p|--password "<value>"] [-d|--domain "<value>"] [-f|--filter
-              "<value>"]
+
+    ________  ________  ___       ________  ________  ________      
+    |\   ____\|\   __  \|\  \     |\   __  \|\   __  \|\   ____\     
+    \ \  \___|\ \  \|\  \ \  \    \ \  \|\  \ \  \|\  \ \  \___|_    
+     \ \  \  __\ \  \\\  \ \  \    \ \   __  \ \   ____\ \_____  \   
+      \ \  \|\  \ \  \\\  \ \  \____\ \  \ \  \ \  \___|\|____|\  \  
+       \ \_______\ \_______\ \_______\ \__\ \__\ \__\     ____\_\  \ 
+        \|_______|\|_______|\|_______|\|__|\|__|\|__|    |\_________\
+                                                         \|_________|
+    Retrieve LAPS passwords from a domain controler
+    (author: @felmoltor)
+    Inspired by pyLAPS (https://github.com/p0dalirius/pyLAPS)            
+
+usage: golaps get [-h|--help] -D|--dc "<value>" -u|--username "<value>"
+              -p|--password "<value>" -d|--domain "<value>" [-f|--filter
+              "<value>"] [-o|--out "<value>"]
+
+              
+
 Arguments:
 
   -h  --help      Print help information
@@ -22,7 +38,9 @@ Arguments:
   -u  --username  Username to authenticate with.
   -p  --password  Password to authenticate with.
   -d  --domain    Domain of the user authenticating.
-  -f  --filter    Substring of the computer name (samAccountName) to search for.
+  -f  --filter    Substring of the computer name (samAccountName) to search
+                  for.
+  -o  --out       File name of the csv file to write the results.
 ```
 
 ## Set LAPS password
